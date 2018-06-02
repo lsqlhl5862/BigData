@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import time
 
+
 def diffService(modules, files):
     info = []  # 存储信息
     count = 0  # diff数量
@@ -30,30 +31,32 @@ def diffService(modules, files):
             if files[startLine+2].startswith("index"):
                 haveIndex = True
             tempStartLine = startLine
-            tempChangeLine =0 
-            #确定第一个@@
+            tempChangeLine = 0
+            # 确定第一个@@
             while not files[tempStartLine].startswith("@@"):
                 tempStartLine += 1
             for index in range(tempStartLine, endLine+1, 1):
                 item = str(files[index])
                 if item.startswith("-"):
                     subCount += 1
-                    tempChangeLine+=1
+                    tempChangeLine += 1
                 elif item.startswith("+"):
                     addCount += 1
-                    tempChangeLine+=1
+                    tempChangeLine += 1
                     if item.startswith("+/*") or item.startswith("+ *"):
                         annotationCount += 1
                 elif item.startswith("@@"):
                     editCount += 1
-            if tempChangeLine>maxChangeLine:
-                maxChangeLine=tempChangeLine
-    info=[count,editCount,subCount,addCount,annotationCount,haveTime,haveIndex,maxChangeLine]
+            if tempChangeLine > maxChangeLine:
+                maxChangeLine = tempChangeLine
+    info = [count, editCount, subCount, addCount,
+            annotationCount, haveTime, haveIndex, maxChangeLine]
     # info.columns = ['count','editCount',"subCount","addCount","annotationCount","haveTime","haveIndex","maxChangeLine",]
     # return pd.DataFrame(info).transpose()
     return info
     # w = re.findall(r'\btina','tian tinaaaa')
     # print(w)
+
 
 def fileService(filePath):
     f = open(filePath, 'r')  # 文件为123.txt
@@ -63,20 +66,25 @@ def fileService(filePath):
     for line in sourceInLines:
         temp1 = line.strip('\n')  # 去掉每行最后的换行符'\n'
         new.append(temp1)  # 将上一步得到的列表添加到new中
-    #选择模块
-    info=diffService("md", new)
-    info.append(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(os.path.getmtime(filePath))))
+    # 选择模块
+    info = diffService("md", new)
+    info.append(time.strftime("%Y-%m-%d %H:%M:%S",
+                              time.localtime(os.path.getmtime(filePath))))
     info.append(os.path.getsize(filePath))
     return info
 
+
 def folderService():
-    result=[]
+    result = []
+    # 遍历目录下所有patch文件
     for item in list(os.walk("patchs"))[0][2]:
-        info=fileService('patchs/'+item)
-        info.insert(0,item)
+        info = fileService('patchs/'+item)
+        info.insert(0, item)
         result.append(info)
-    result=pd.DataFrame(result)
-    result.columns = ['patchName','count','editCount',"subCount","addCount","annotationCount","haveTime","haveIndex","maxChangeLine","editTime","size"]
+    result = pd.DataFrame(result)
+    result.columns = ['patchName', 'count', 'editCount', "subCount", "addCount",
+                      "annotationCount", "haveTime", "haveIndex", "maxChangeLine", "editTime", "size"]
     return result
+
 
 folderService().to_csv("results/result.csv")

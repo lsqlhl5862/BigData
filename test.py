@@ -63,15 +63,20 @@ def fileService(filePath):
     for line in sourceInLines:
         temp1 = line.strip('\n')  # 去掉每行最后的换行符'\n'
         new.append(temp1)  # 将上一步得到的列表添加到new中
-    result=[]
+    #选择模块
     info=diffService("md", new)
     info.append(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(os.path.getmtime(filePath))))
     info.append(os.path.getsize(filePath))
-    result.append(info)
+    return info
+
+def folderService():
+    result=[]
+    for item in list(os.walk("patchs"))[0][2]:
+        info=fileService('patchs/'+item)
+        info.insert(0,item)
+        result.append(info)
     result=pd.DataFrame(result)
-    result.columns = ['count','editCount',"subCount","addCount","annotationCount","haveTime","haveIndex","maxChangeLine","editTime","size"]
+    result.columns = ['patchName','count','editCount',"subCount","addCount","annotationCount","haveTime","haveIndex","maxChangeLine","editTime","size"]
     return result
 
-filePath='patch-2.6.0'
-# def patchService(patchName):
-fileService('patchs/'+filePath).to_csv("results/"+filePath+".csv")
+folderService().to_csv("results/result.csv")

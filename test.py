@@ -79,7 +79,7 @@ def fileService(filePath):
 
 def folderService():
     result = []
-    # 遍历目录下所有patch文件
+    # 遍历patchs目录下所有patch文件
     for item in list(os.walk("patchs"))[0][2]:
         info = fileService('patchs/'+item)
         info.insert(0, item)

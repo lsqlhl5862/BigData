@@ -5,7 +5,8 @@ import time
 
 def diffService(modules, files):
     info = []  # 存储信息
-    count = 0  # diff数量
+    count = 0  # diff总数
+    diffCount = 0  # 对应模块diff数量
     editCount = 0  # 修改的数量（几处地方）
     subCount = 0  # 减少的行数
     addCount = 0  # 添加的行数
@@ -15,12 +16,14 @@ def diffService(modules, files):
     maxChangeLine = 0  # 最多修改行数
     for item in files:
         # 判断是否是要操作的模块
-        if('diff'in str(item))and('/'+modules+'/'in str(item)):
+        if str(item).startswith("diff"):
             count += 1
+        if(str(item).startswith("diff"))and('/'+modules+'/'in str(item)):
+            diffCount += 1
             startLine = files.index(item)  # diff头
             endLine = startLine+1  # diff尾
             # 获取diff尾
-            while not(('diff'in str(files[endLine])) or (files.count == endLine+1)):
+            while not(('diff'in str(files[endLine])) or (len(files) == endLine+1)):
                 endLine += 1
             endLine -= 1
             time = []
@@ -49,7 +52,7 @@ def diffService(modules, files):
                     editCount += 1
             if tempChangeLine > maxChangeLine:
                 maxChangeLine = tempChangeLine
-    info = [count, editCount, subCount, addCount,
+    info = [count,diffCount, editCount, subCount, addCount,
             annotationCount, haveTime, haveIndex, maxChangeLine]
     # info.columns = ['count','editCount',"subCount","addCount","annotationCount","haveTime","haveIndex","maxChangeLine",]
     # return pd.DataFrame(info).transpose()
@@ -82,7 +85,7 @@ def folderService():
         info.insert(0, item)
         result.append(info)
     result = pd.DataFrame(result)
-    result.columns = ['patchName', 'count', 'editCount', "subCount", "addCount",
+    result.columns = ['patchName','count', 'diffCount', 'editCount', "subCount", "addCount",
                       "annotationCount", "haveTime", "haveIndex", "maxChangeLine", "editTime", "size"]
     return result
 

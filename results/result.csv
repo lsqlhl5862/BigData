@@ -1,3 +1,3 @@
-,patchName,count,editCount,subCount,addCount,annotationCount,haveTime,haveIndex,maxChangeLine,editTime,size
-0,patch-2.6.0,1,10,9,25,9,True,False,34,2003-12-18 11:00:08,34410
-1,patch-4.16.1,0,0,0,0,0,False,False,0,2018-06-02 09:53:29,42980
+,patchName,count,diffCount,editCount,subCount,addCount,annotationCount,haveTime,haveIndex,maxChangeLine,editTime,size
+0,patch-2.6.0,43,1,10,9,25,9,True,False,34,2003-12-18 11:00:08,34410
+1,patch-4.16.1,36,0,0,0,0,0,False,False,0,2018-06-02 09:53:29,42980

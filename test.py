@@ -2,9 +2,10 @@ import os
 import pandas as pd
 import time
 import chardet
-from bs4 import UnicodeDammit  
+from bs4 import UnicodeDammit
 
-def diffService(modules, files):
+
+def diffService(module, files):
     info = []  # 存储信息
     count = 0  # diff总数
     diffCount = 0  # 对应模块diff数量
@@ -19,7 +20,7 @@ def diffService(modules, files):
         # 判断是否是要操作的模块
         if str(item).startswith("diff"):
             count += 1
-        if(str(item).startswith("diff"))and('/'+modules+'/'in str(item)):
+        if(str(item).startswith("diff"))and('/'+module+'/'in str(item)):
             diffCount += 1
             startLine = files.index(item)  # diff头
             endLine = startLine+1  # diff尾
@@ -53,7 +54,7 @@ def diffService(modules, files):
                     editCount += 1
             if tempChangeLine > maxChangeLine:
                 maxChangeLine = tempChangeLine
-    info = [count,diffCount, editCount, subCount, addCount,
+    info = [count, diffCount, editCount, subCount, addCount,
             annotationCount, haveTime, haveIndex, maxChangeLine]
     # info.columns = ['count','editCount',"subCount","addCount","annotationCount","haveTime","haveIndex","maxChangeLine",]
     # return pd.DataFrame(info).transpose()
@@ -62,7 +63,7 @@ def diffService(modules, files):
     # print(w)
 
 
-def fileService(filePath):
+def fileService(filePath, module):
     f = open(filePath, 'rb')  # 文件为123.txt
     sourceInLines = f.readlines()  # 按行读出文件内容
     # encodingTemp = str(UnicodeDammit(f.read()).original_encoding)
@@ -72,12 +73,12 @@ def fileService(filePath):
         temp1 = line.strip(b'\n')
         # temp1 = bytes.decode(temp1,encoding="utf-8")
         try:
-            temp1 = bytes.decode(temp1,encoding="ascii")  # 去掉每行最后的换行符'\n'
+            temp1 = bytes.decode(temp1, encoding="ascii")  # 去掉每行最后的换行符'\n'
         except:
-            temp1 = bytes.decode(temp1,encoding="ISO-8859-1")
+            temp1 = bytes.decode(temp1, encoding="ISO-8859-1")
         new.append(temp1)  # 将上一步得到的列表添加到new中
     # 选择模块
-    info = diffService("md", new)
+    info = diffService(module, new)
     info.append(time.strftime("%Y-%m-%d %H:%M:%S",
                               time.localtime(os.path.getmtime(filePath))))
     info.append(os.path.getsize(filePath))
@@ -85,17 +86,19 @@ def fileService(filePath):
 
 
 def folderService():
-    result = []
+    modules = ["md", "mm", "crypto", "ipc", "fs", "kvm"]
     # 遍历patchs目录下所有patch文件
-    for item in list(os.walk("patchs"))[0][2]:
-        print(item)
-        info = fileService('patchs/'+item)
-        info.insert(0, item)
-        result.append(info)
-    result = pd.DataFrame(result)
-    result.columns = ['patchName','count', 'diffCount', 'editCount', "subCount", "addCount",
-                      "annotationCount", "haveTime", "haveIndex", "maxChangeLine", "editTime", "size"]
-    return result
+    for module in modules:
+        result = []
+        for item in list(os.walk("patchs"))[0][2]:
+            print(item)
+            info = fileService('patchs/'+item, module)
+            info.insert(0, item)
+            result.append(info)
+        result = pd.DataFrame(result)
+        result.columns = ['patchName', 'count', 'diffCount', 'editCount', "subCount", "addCount",
+                          "annotationCount", "haveTime", "haveIndex", "maxChangeLine", "editTime", "size"]
+        result.to_csv("results/result_"+module+".csv")
 
 
-folderService().to_csv("results/result.csv")
+folderService()

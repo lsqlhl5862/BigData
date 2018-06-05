@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import time
 import chardet
+from bs4 import UnicodeDammit  
 
 def diffService(modules, files):
     info = []  # 存储信息
@@ -63,13 +64,17 @@ def diffService(modules, files):
 
 def fileService(filePath):
     f = open(filePath, 'rb')  # 文件为123.txt
-    encodingTemp = chardet.detect(f.read())["encoding"]
     sourceInLines = f.readlines()  # 按行读出文件内容
+    # encodingTemp = str(UnicodeDammit(f.read()).original_encoding)
     f.close()
     new = []  # 定义一个空列表，用来存储结果
     for line in sourceInLines:
-        temp1 = line.strip('\n')
-        temp1 = bytes.decode(temp1,encoding=encodingTemp)  # 去掉每行最后的换行符'\n'
+        temp1 = line.strip(b'\n')
+        # temp1 = bytes.decode(temp1,encoding="utf-8")
+        try:
+            temp1 = bytes.decode(temp1,encoding="ascii")  # 去掉每行最后的换行符'\n'
+        except:
+            temp1 = bytes.decode(temp1,encoding="ISO-8859-1")
         new.append(temp1)  # 将上一步得到的列表添加到new中
     # 选择模块
     info = diffService("md", new)

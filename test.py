@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import time
-
+import chardet
 
 def diffService(modules, files):
     info = []  # 存储信息
@@ -62,12 +62,14 @@ def diffService(modules, files):
 
 
 def fileService(filePath):
-    f = open(filePath, 'r')  # 文件为123.txt
+    f = open(filePath, 'rb')  # 文件为123.txt
+    encodingTemp = chardet.detect(f.read())["encoding"]
     sourceInLines = f.readlines()  # 按行读出文件内容
     f.close()
     new = []  # 定义一个空列表，用来存储结果
     for line in sourceInLines:
-        temp1 = line.strip('\n')  # 去掉每行最后的换行符'\n'
+        temp1 = line.strip('\n')
+        temp1 = bytes.decode(temp1,encoding=encodingTemp)  # 去掉每行最后的换行符'\n'
         new.append(temp1)  # 将上一步得到的列表添加到new中
     # 选择模块
     info = diffService("md", new)
@@ -81,6 +83,7 @@ def folderService():
     result = []
     # 遍历patchs目录下所有patch文件
     for item in list(os.walk("patchs"))[0][2]:
+        print(item)
         info = fileService('patchs/'+item)
         info.insert(0, item)
         result.append(info)

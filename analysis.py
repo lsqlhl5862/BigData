@@ -55,14 +55,25 @@ for item in result:
 # # print(df.groupby(["editTime"]).size().values)
 # # patch次数
 # plt.figure()
-# plt.bar(df.groupby(["editTime"]).size().index,df.groupby(["editTime"]).size().values)
+# plt.bar(df.groupby(["editTime"]).size().index.tolist()[:48],df.groupby(["editTime"]).size().values.tolist()[:48])
 # plt.gcf().autofmt_xdate()
 # plt.xticks(fontsize=5)
 # plt.yticks(fontsize=20)
 # plt.xlabel("date", fontsize=10)
 # plt.ylabel("times", fontsize=10)
-# plt.title("Patch Counts of Every Month")
-# plt.savefig("pictures/"+"patch-time.png")
+# plt.title("Patch Counts of Every Month-1")
+# plt.savefig("pictures/"+"patch-time-1.png")
+# # print(df.groupby(["editTime"]).size().values)
+# # patch次数
+# plt.figure()
+# plt.bar(df.groupby(["editTime"]).size().index.tolist()[48:],df.groupby(["editTime"]).size().values.tolist()[48:])
+# plt.gcf().autofmt_xdate()
+# plt.xticks(fontsize=5)
+# plt.yticks(fontsize=20)
+# plt.xlabel("date", fontsize=10)
+# plt.ylabel("times", fontsize=10)
+# plt.title("Patch Counts of Every Month-2")
+# plt.savefig("pictures/"+"patch-time-2.png")
 
 # # print(df.apply(lambda x:x["diffCount"]/x["count"],axis=1).values)
 
@@ -112,11 +123,11 @@ for item in result:
 # plt.gcf().autofmt_xdate()
 # plt.xticks(fontsize=5)
 # plt.yticks(fontsize=20)
-# plt.xlabel("date", fontsize=10)
-# plt.ylabel("times", fontsize=10)
-# plt.title("Size of Date")
-# plt.savefig("pictures/"+"size-date.png")
-# # print(df.groupby(["editTime"])["size"].size())
+# plt.xlabel("version", fontsize=10)
+# plt.ylabel("size", fontsize=10)
+# plt.title("Size of Version")
+# plt.savefig("pictures/"+"size-version.png")
+# print(df.groupby(["editTime"])["size"].size())
 
 # 大小随版本变化
 # plt.figure()
@@ -166,16 +177,19 @@ for item in result:
 #     plt.savefig("pictures/"+"Changelines_"+item+".png")
 
 # # 修改行数
-plt.figure()
-for item in result:
-    x=range(832)
-    y = result[item].apply(lambda x: x["diffCount"], axis=1).values
-    plt.plot(x, y,"--",label=item)
-plt.xticks(fontsize=5)
-plt.yticks(fontsize=10)
-plt.xlabel("version", fontsize=10)
-plt.ylabel("times", fontsize=10)
-plt.title("Stablity for Versions")
-plt.legend(bbox_to_anchor=(1.0, 1), loc=1, borderaxespad=0.)
-plt.savefig("pictures/"+"stability_version.png")
-plt.show()
+# plt.figure()
+# for item in result:
+#     x=range(832)
+#     y = result[item].apply(lambda x: x["diffCount"], axis=1).values
+#     plt.plot(x, y,"--",label=item)
+# plt.xticks(fontsize=5)
+# plt.yticks(fontsize=10)
+# plt.xlabel("version", fontsize=10)
+# plt.ylabel("times", fontsize=10)
+# plt.title("Stablity for Versions")
+# plt.legend(bbox_to_anchor=(1.0, 1), loc=1, borderaxespad=0.)
+# plt.savefig("pictures/"+"stability_version.png")
+# plt.show()
+
+
+print(result["kvm"].sort_values(by=["subCount"],ascending=False)["patchName"].tolist())

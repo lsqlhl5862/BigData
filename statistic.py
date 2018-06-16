@@ -66,14 +66,12 @@ def diffService(module, files):
 def fileService(filePath, module):
     f = open(filePath, 'rb')  # 文件为123.txt
     sourceInLines = f.readlines()  # 按行读出文件内容
-    # encodingTemp = str(UnicodeDammit(f.read()).original_encoding)
     f.close()
     new = []  # 定义一个空列表，用来存储结果
     for line in sourceInLines:
         temp1 = line.strip(b'\n')
-        # temp1 = bytes.decode(temp1,encoding="utf-8")
         try:
-            temp1 = bytes.decode(temp1, encoding="ascii")  # 去掉每行最后的换行符'\n'
+            temp1 = bytes.decode(temp1, encoding="ascii") 
         except:
             temp1 = bytes.decode(temp1, encoding="ISO-8859-1")
         new.append(temp1)  # 将上一步得到的列表添加到new中
